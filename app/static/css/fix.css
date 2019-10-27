@@ -1,0 +1,3 @@
+.masthead{
+    background-image: url({{ url_for ('static', filename = 'showcase.jpeg') }});
+}
