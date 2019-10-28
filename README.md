@@ -7,7 +7,7 @@
 This is an app that allows users to create,comment,edit and submit theblog
 
 ## Project live site
-  This is the live .[ Click for the demo](/)
+  This is the live .[ Click for the demo](https://theblogger001.herokuapp.com/)
  ![Image](app/static/photos/blog.png)
 ## Features
 * landing page containing random quotes
