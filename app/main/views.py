@@ -2,10 +2,11 @@ from flask import render_template,redirect,url_for, abort,request,flash
 from . import main
 from ..requests import get_quotes
 from .forms import CommentsForm, UpdateProfile, BlogForm
-from ..models import User,Blog, Comment, Blog
+from ..models import User,Blog, Comment, Blog, Subscribe
 from flask_login import login_required, current_user
 from .. import db, photos
 import markdown2
+from ..email import mail_message
 
     
 
@@ -15,7 +16,7 @@ def index():
     '''
     View root page function that returns the index page and its data
     '''
-    posts = Blog.query.order_by(Blog.date).all()
+    posts = Blog.query.order_by(Blog.date.desc()).all()
     quotes = get_quotes()
 
     title = 'Home - Welcome to the bloging site'
@@ -122,7 +123,7 @@ def update_profile(uname):
 @login_required
 def update_post(post_id):
     post = Blog.query.get_or_404(post_id)
-    if post.author != current_user:
+    if post.user != current_user:
         abort(403)
     form = BlogForm()
     if form.validate_on_submit():
@@ -132,7 +133,7 @@ def update_post(post_id):
         
         db.session.commit()
         flash('Your post has been updated!', 'success')
-        return redirect(url_for('post', post_id=post.id))
+        return redirect(url_for('main.post', post_id=post.id))
     elif request.method == 'GET':
         form.title.data = post.title
         form.subtitle = post.subtitle
@@ -143,10 +144,11 @@ def update_post(post_id):
 @login_required
 def delete_post(post_id):
     post = Blog.query.get_or_404(post_id)
-    if post.author != current_user:
+    if post.user != current_user:
         abort(403)
     db.session.delete(post)
     db.session.commit()
+    
     flash('Your post has been deleted!', 'success')
     return redirect(url_for('home'))
 
@@ -158,6 +160,22 @@ def view_comments(id):
     '''
     comments = Comment.get_comments(id)
     return render_template('view_comments.html',comments = comments, id=id)
+
+#sSubscribe
+@main.route('/subscribe', methods=['GET', 'POST'])
+def subscribe():
+    '''
+    Function to send email upon subscription
+    '''
+    if request.method == 'POST':
+        email = request.form['email']
+        new_email = Subscribe(email=email)
+        db.session.add(new_email)
+        db.session.commit()
+        # mail_message("Welcome to Blogging site","email/welcome_subscriber", new_email.email,new_email=new_email)
+        flash('Thank you for your subscription')
+        return redirect(url_for('main.index'))
+        
 
 
 
