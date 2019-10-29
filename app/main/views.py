@@ -74,9 +74,9 @@ def new_comment(id):
     form = CommentsForm()
    
     if form.validate_on_submit():
-        new_comment = Comment(blog_id =id,comment=form.comment.data,username=current_user.username)
+        new_comment = Comment(blog_id =id,comment=form.comment.data)
         new_comment.save_comments()
-        return redirect(url_for('main.all'))
+        return redirect(url_for('main.post',post_id=id))
     
     return render_template('new_comment.html',comment_form=form)
 
@@ -120,7 +120,6 @@ def update_profile(uname):
     return render_template('profile/update.html',form =form)
 
 @main.route("/post/<int:post_id>/update", methods=['GET', 'POST'])
-@login_required
 def update_post(post_id):
     post = Blog.query.get_or_404(post_id)
     if post.user != current_user:
@@ -150,7 +149,7 @@ def delete_post(post_id):
     db.session.commit()
     
     flash('Your post has been deleted!', 'success')
-    return redirect(url_for('home'))
+    return redirect(url_for('main.index'))
 
 
 @main.route('/view/comment/<int:id>')
@@ -159,7 +158,7 @@ def view_comments(id):
     Function that returs  the comments belonging to a particular pitch
     '''
     comments = Comment.get_comments(id)
-    return render_template('view_comments.html',comments = comments, id=id)
+    return render_template('post.html',comments = comments, id=id)
 
 #sSubscribe
 @main.route('/subscribe', methods=['GET', 'POST'])
