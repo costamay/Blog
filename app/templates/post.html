@@ -126,7 +126,7 @@
           <div class="col-lg-8 col-md-10 mx-auto">
             <h3>Comments:</h3>
            <hr>
-           {% for comment in comments[::-1]%}
+           {% for comment in post_comments%}
            <p>{{comment.comment}}</p>
            <p>{{comment.posted.strftime('%B %d, %Y')}}</p>
            <hr>
