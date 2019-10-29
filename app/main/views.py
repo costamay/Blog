@@ -37,7 +37,7 @@ def post(post_id):
     '''
     post = Blog.query.filter_by(id=post_id).one()
     post_comments = Comment.get_comments(post_id)
-    title = ''
+    title = '' 
     return render_template('post.html', title = title, post=post, post_comments=post_comments )
 
 @main.route('/contact')
@@ -152,13 +152,6 @@ def delete_post(post_id):
     return redirect(url_for('main.index'))
 
 
-@main.route('/view/comment/<int:id>')
-def view_comments(id):
-    '''
-    Function that returs  the comments belonging to a particular pitch
-    '''
-    comments = Comment.get_comments(id)
-    return render_template('post.html',comments = comments, id=id)
 
 #sSubscribe
 @main.route('/subscribe', methods=['GET', 'POST'])
